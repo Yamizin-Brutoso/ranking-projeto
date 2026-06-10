@@ -541,7 +541,12 @@
       gols:      Number(d.gols)      || 0,
       assistencias: Number(d.assists) || Number(d.assistencias) || 0,
       desarmes:  Number(d.desarmes)  || 0,
-    })).sort((a, b) => b.pr - a.pr);
+    })).sort((a, b) => {
+      if (b.pr !== a.pr) return b.pr - a.pr;
+      if (b.gols !== a.gols) return b.gols - a.gols;
+      if (b.assistencias !== a.assistencias) return b.assistencias - a.assistencias;
+      return b.desarmes - a.desarmes;
+    });
 
     renderGeral();
     renderPosicao();

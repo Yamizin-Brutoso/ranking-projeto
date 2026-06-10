@@ -611,8 +611,17 @@
       ? ['Atacante', 'Meia', 'Zagueiro']
       : [posAtual];
 
+    const sortPorPos = (lista, pos) => {
+      const ordem = {
+        'Atacante': (a,b) => b.pr!==a.pr ? b.pr-a.pr : b.gols!==a.gols ? b.gols-a.gols : b.assistencias!==a.assistencias ? b.assistencias-a.assistencias : b.desarmes-a.desarmes,
+        'Meia':     (a,b) => b.pr!==a.pr ? b.pr-a.pr : b.assistencias!==a.assistencias ? b.assistencias-a.assistencias : b.gols!==a.gols ? b.gols-a.gols : b.desarmes-a.desarmes,
+        'Zagueiro': (a,b) => b.pr!==a.pr ? b.pr-a.pr : b.desarmes!==a.desarmes ? b.desarmes-a.desarmes : b.assistencias!==a.assistencias ? b.assistencias-a.assistencias : b.gols-a.gols,
+      };
+      return [...lista].sort(ordem[pos] || ((a,b) => b.pr-a.pr));
+    };
+
     area.innerHTML = posicoes.map(pos => {
-      const jogadores = todosJogadores.filter(j => j.posicao === pos);
+      const jogadores = sortPorPos(todosJogadores.filter(j => j.posicao === pos), pos);
       if (!jogadores.length) return `
         <h2 class="section-title"><span class="accent">${posIcon(pos)}</span> ${pos}s</h2>
         <div class="empty-state" style="padding:32px 0 48px">
@@ -767,8 +776,17 @@
     function posIcon(p) { return { Atacante:'⚔️', Meia:'🔷', Zagueiro:'🛡️' }[p] || '•'; }
     function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+    const sortPos = (lista, p) => {
+      const fn = {
+        'Atacante': (a,b) => b.pr!==a.pr?b.pr-a.pr:b.gols!==a.gols?b.gols-a.gols:b.assistencias!==a.assistencias?b.assistencias-a.assistencias:b.desarmes-a.desarmes,
+        'Meia':     (a,b) => b.pr!==a.pr?b.pr-a.pr:b.assistencias!==a.assistencias?b.assistencias-a.assistencias:b.gols!==a.gols?b.gols-a.gols:b.desarmes-a.desarmes,
+        'Zagueiro': (a,b) => b.pr!==a.pr?b.pr-a.pr:b.desarmes!==a.desarmes?b.desarmes-a.desarmes:b.assistencias!==a.assistencias?b.assistencias-a.assistencias:b.gols-a.gols,
+      };
+      return [...lista].sort(fn[p] || ((a,b)=>b.pr-a.pr));
+    };
+
     area.innerHTML = posicoes.map(p => {
-      const list = jogadores.filter(j => j.posicao === p);
+      const list = sortPos(jogadores.filter(j => j.posicao === p), p);
       if (!list.length) return `
         <h2 class="section-title"><span class="accent">${posIcon(p)}</span> ${p}s</h2>
         <div class="empty-state" style="padding:32px 0 48px">

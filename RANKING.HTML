@@ -594,7 +594,7 @@
         <td class="num">${j.gols}</td>
         <td class="num">${j.assistencias}</td>
         <td class="num">${j.desarmes}</td>
-        <td><button class="btn-excluir" onclick="abrirModal('${j.pid}','${j.nome.replace(/'/g,\"\\'\")}')">🗑️</button></td>
+        <td><button class="btn-excluir" data-pid="${j.pid}" data-nome="${esc(j.nome)}" onclick="abrirModalBtn(this)">🗑️</button></td>
       </tr>`;
     }).join('');
   }
@@ -706,6 +706,10 @@
   window._fbRemove = (pid) => remove(ref(db, 'ranking/' + pid));
   // ── MODAL EXCLUIR ──
   let _pidParaExcluir = null;
+
+  function abrirModalBtn(btn) {
+    abrirModal(btn.dataset.pid, btn.dataset.nome);
+  }
 
   function abrirModal(pid, nome) {
     _pidParaExcluir = pid;

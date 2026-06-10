@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Blue Lock — Ranking</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --bg:        #0a0a0f;
+    --surface:   #12121a;
+    --card:      #1a1a26;
+    --border:    #2a2a3a;
+    --accent:    #4f8ef7;
+    --gold:      #f0b429;
+    --silver:    #b0b8cc;
+    --bronze:    #cd7c3a;
+    --green:     #3ecf8e;
+    --red:       #f06060;
+    --text:      #e8eaf0;
+    --muted:     #6b7080;
+    --glow:      rgba(79,142,247,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: relative;
+    padding: 48px 32px 32px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #0d0d18 0%, var(--bg) 100%);
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% -20%, rgba(79,142,247,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 8vw, 96px);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: var(--text);
+  }
+  h1 span {
+    color: var(--accent);
+  }
+  .header-sub {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+  }
+  .live-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
+    animation: pulse 1.6s ease-in-out infinite;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    padding: 24px 32px 0;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 10px 24px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: color .2s, border-color .2s;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+  .tab-btn:hover:not(.active) { color: var(--text); }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 36px 20px 80px;
+  }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ── PODIUM ── */
+  .podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 48px;
+    padding: 0 12px;
+  }
+  .podium-slot {
+    flex: 1;
+    max-width: 220px;
+    text-align: center;
+  }
+  .podium-card {
+    border-radius: 12px 12px 0 0;
+    padding: 20px 12px 16px;
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-bottom: none;
+  }
+  .podium-slot:nth-child(1) .podium-card { /* 2nd */
+    height: 140px; display: flex; flex-direction: column; justify-content: flex-end;
+    border-top-color: var(--silver);
+  }
+  .podium-slot:nth-child(2) .podium-card { /* 1st */
+    height: 180px; display: flex; flex-direction: column; justify-content: flex-end;
+    border-top-color: var(--gold);
+    background: linear-gradient(180deg, rgba(240,180,41,0.08) 0%, var(--card) 60%);
+  }
+  .podium-slot:nth-child(3) .podium-card { /* 3rd */
+    height: 110px; display: flex; flex-direction: column; justify-content: flex-end;
+    border-top-color: var(--bronze);
+  }
+  .podium-base {
+    padding: 8px;
+    border-radius: 0 0 8px 8px;
+  }
+  .podium-slot:nth-child(1) .podium-base { background: rgba(176,184,204,0.15); }
+  .podium-slot:nth-child(2) .podium-base { background: rgba(240,180,41,0.15); }
+  .podium-slot:nth-child(3) .podium-base { background: rgba(205,124,58,0.15); }
+
+  .podium-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .podium-slot:nth-child(1) .podium-rank { color: var(--silver); }
+  .podium-slot:nth-child(2) .podium-rank { color: var(--gold); }
+  .podium-slot:nth-child(3) .podium-rank { color: var(--bronze); }
+
+  .podium-name {
+    font-weight: 700;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .podium-pos-tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .podium-pr {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    margin-top: 6px;
+  }
+  .podium-pr-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+
+  /* ── RANKING TABLE ── */
+  .rank-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .rank-table thead th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0 16px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .rank-table thead th.num { text-align: right; }
+
+  .rank-table tbody tr {
+    border-bottom: 1px solid rgba(42,42,58,0.5);
+    transition: background .15s;
+  }
+  .rank-table tbody tr:hover { background: rgba(79,142,247,0.04); }
+
+  .rank-table td {
+    padding: 14px 16px;
+    font-size: 14px;
+  }
+  .rank-table td.num {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+  }
+
+  .rank-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--muted);
+    width: 40px;
+  }
+  .rank-num.gold   { color: var(--gold); }
+  .rank-num.silver { color: var(--silver); }
+  .rank-num.bronze { color: var(--bronze); }
+
+  .player-name { font-weight: 600; font-size: 15px; }
+  .player-pid  {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 2px;
+  }
+
+  .pos-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .pos-ATK { background: rgba(240,96,96,0.15); color: #f06060; border: 1px solid rgba(240,96,96,0.3); }
+  .pos-MIA { background: rgba(79,142,247,0.15); color: var(--accent); border: 1px solid rgba(79,142,247,0.3); }
+  .pos-DEF { background: rgba(62,207,142,0.15); color: var(--green); border: 1px solid rgba(62,207,142,0.3); }
+
+  .pr-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--accent);
+  }
+
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .stat-pill .icon { font-size: 13px; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .accent { color: var(--accent); }
+
+  /* ── EMPTY / LOADING ── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--muted);
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+  }
+  .empty-state .big { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--border); display: block; margin-bottom: 12px; }
+
+  /* ── POSITION TABS ── */
+  .pos-filter {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .pos-filter-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .pos-filter-btn.active, .pos-filter-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  /* ── STATS BANNER ── */
+  .stats-banner {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .stat-card .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .stat-card .value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-card .sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* ── BOTÃO EXCLUIR ── */
+  .btn-excluir {
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+    transition: all .15s;
+    line-height: 1;
+  }
+  .btn-excluir:hover { color: var(--red); border-color: rgba(240,96,96,0.4); background: rgba(240,96,96,0.08); }
+
+  /* ── MODAL CONFIRMAÇÃO ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 32px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+  }
+  .modal-icon { font-size: 32px; margin-bottom: 12px; }
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: .05em; margin-bottom: 8px; }
+  .modal-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+  .modal-desc strong { color: var(--text); }
+  .modal-btns { display: flex; gap: 10px; justify-content: center; }
+  .modal-btn-cancel {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--border);
+    background: var(--surface); color: var(--muted); cursor: pointer; font-size: 13px;
+    font-family: 'Inter', sans-serif; font-weight: 600; transition: all .15s;
+  }
+  .modal-btn-cancel:hover { color: var(--text); border-color: var(--text); }
+  .modal-btn-confirm {
+    flex: 1; padding: 10px; border-radius: 8px; border: 1px solid rgba(240,96,96,0.4);
+    background: rgba(240,96,96,0.12); color: var(--red); cursor: pointer; font-size: 13px;
+    font-family: 'Inter', sans-serif; font-weight: 700; transition: all .15s;
+  }
+  .modal-btn-confirm:hover { background: rgba(240,96,96,0.22); }
+
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-eyebrow">⚽ Blue Lock RPG</div>
+  <h1>BLUE <span>LOCK</span></h1>
+  <div style="font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:.1em; color:var(--muted); margin-top:-4px;">RANKING SYSTEM</div>
+  <div class="header-sub"><span class="live-dot"></span>TEMPO REAL · FIREBASE SYNC</div>
+</header>
+
+<div class="tabs" id="mainTabs">
+  <button class="tab-btn active" onclick="switchTab('geral')">🌍 Geral</button>
+  <button class="tab-btn" onclick="switchTab('posicao')">📋 Por Posição</button>
+</div>
+
+<main>
+
+  <!-- TAB GERAL -->
+  <div class="tab-pane active" id="tab-geral">
+    <div id="statsBanner" class="stats-banner"></div>
+    <div id="podiumArea" class="podium"></div>
+    <h2 class="section-title"><span class="accent">#</span> Ranking Geral</h2>
+    <table class="rank-table">
+      <thead>
+        <tr>
+          <th style="width:44px">#</th>
+          <th>Jogador</th>
+          <th>Posição</th>
+          <th class="num">PR</th>
+          <th class="num">⚽ Gols</th>
+          <th class="num">🎯 Assists</th>
+          <th class="num">🛡️ Desarmes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="rankGeralBody"></tbody>
+    </table>
+    <div id="rankGeralEmpty" class="empty-state" style="display:none">
+      <span class="big">—</span>
+      Nenhum dado ainda.<br>Envie PR pela Calculadora do Tracker.
+    </div>
+  </div>
+
+  <!-- TAB POR POSIÇÃO -->
+  <div class="tab-pane" id="tab-posicao">
+    <div class="pos-filter" id="posFilter">
+      <button class="pos-filter-btn active" onclick="filterPos('TODOS')">Todos</button>
+      <button class="pos-filter-btn" onclick="filterPos('Atacante')">⚔️ Atacantes</button>
+      <button class="pos-filter-btn" onclick="filterPos('Meia')">🔷 Meias</button>
+      <button class="pos-filter-btn" onclick="filterPos('Zagueiro')">🛡️ Zagueiros</button>
+    </div>
+    <div id="posRankingArea"></div>
+  </div>
+
+</main>
+
+<!-- MODAL CONFIRMAR EXCLUSÃO -->
+<div class="modal-overlay" id="modalExcluir">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">Excluir Jogador</div>
+    <div class="modal-desc">Tem certeza que quer excluir <strong id="modalNome"></strong> do ranking?<br>Todos os dados acumulados serão apagados.</div>
+    <div class="modal-btns">
+      <button class="modal-btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button class="modal-btn-confirm" onclick="confirmarExclusao()">Excluir</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbvqwAn2uzygO19hD2o9yXTq7H8C4xy3g",
+    authDomain: "blue-38b9f.firebaseapp.com",
+    databaseURL: "https://blue-38b9f-default-rtdb.firebaseio.com",
+    projectId: "blue-38b9f",
+    storageBucket: "blue-38b9f.firebasestorage.app",
+    messagingSenderId: "582237415018",
+    appId: "1:582237415018:web:d83f5012e0edd45f81cc13"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getDatabase(app);
+
+  let todosJogadores = [];
+  let posAtual = 'TODOS';
+
+  // ── OUVE RANKING EM TEMPO REAL ──
+  onValue(ref(db, 'ranking'), snap => {
+    const raw = snap.val() || {};
+    todosJogadores = Object.entries(raw).map(([pid, d]) => ({
+      pid,
+      nome:      d.name      || d.nome      || pid,
+      posicao:   d.pos       || d.posicao   || '—',
+      pr:        Number(d.pr)        || 0,
+      gols:      Number(d.gols)      || 0,
+      assistencias: Number(d.assists) || Number(d.assistencias) || 0,
+      desarmes:  Number(d.desarmes)  || 0,
+    })).sort((a, b) => b.pr - a.pr);
+
+    renderGeral();
+    renderPosicao();
+    renderStats();
+  });
+
+  // ── RENDER GERAL ──
+  function renderGeral() {
+    const body  = document.getElementById('rankGeralBody');
+    const empty = document.getElementById('rankGeralEmpty');
+    const podium = document.getElementById('podiumArea');
+
+    if (!todosJogadores.length) {
+      body.innerHTML = '';
+      podium.innerHTML = '';
+      empty.style.display = '';
+      return;
+    }
+    empty.style.display = 'none';
+
+    // podium (top 3)
+    const top3 = todosJogadores.slice(0, 3);
+    const ordem = [top3[1], top3[0], top3[2]].filter(Boolean); // 2º | 1º | 3º
+    const ordemRank = [2, 1, 3];
+    podium.innerHTML = ordem.map((j, i) => `
+      <div class="podium-slot">
+        <div class="podium-card">
+          <div class="podium-rank">${ordemRank[i]}º</div>
+          <div class="podium-name">${esc(j.nome)}</div>
+          <span class="podium-pos-tag">${esc(j.posicao)}</span>
+          <div class="podium-pr">${j.pr}</div>
+          <div class="podium-pr-label">PR</div>
+        </div>
+        <div class="podium-base"></div>
+      </div>
+    `).join('');
+
+    // tabela completa
+    body.innerHTML = todosJogadores.map((j, i) => {
+      const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      return `
+      <tr>
+        <td class="rank-num ${rankClass}">${i + 1}</td>
+        <td>
+          <div class="player-name">${esc(j.nome)}</div>
+          <div class="player-pid">${esc(j.pid)}</div>
+        </td>
+        <td><span class="pos-badge ${posBadgeClass(j.posicao)}">${esc(j.posicao)}</span></td>
+        <td class="num"><span class="pr-value">${j.pr}</span></td>
+        <td class="num">${j.gols}</td>
+        <td class="num">${j.assistencias}</td>
+        <td class="num">${j.desarmes}</td>
+        <td><button class="btn-excluir" onclick="abrirModal('${j.pid}','${j.nome.replace(/'/g,\"\\'\")}')">🗑️</button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── RENDER POR POSIÇÃO ──
+  function renderPosicao() {
+    const area = document.getElementById('posRankingArea');
+    const posicoes = posAtual === 'TODOS'
+      ? ['Atacante', 'Meia', 'Zagueiro']
+      : [posAtual];
+
+    area.innerHTML = posicoes.map(pos => {
+      const jogadores = todosJogadores.filter(j => j.posicao === pos);
+      if (!jogadores.length) return `
+        <h2 class="section-title"><span class="accent">${posIcon(pos)}</span> ${pos}s</h2>
+        <div class="empty-state" style="padding:32px 0 48px">
+          <span style="color:var(--border);font-family:'Bebas Neue',sans-serif;font-size:32px;display:block;margin-bottom:8px">—</span>
+          Nenhum ${pos.toLowerCase()} cadastrado ainda.
+        </div>`;
+
+      return `
+        <h2 class="section-title"><span class="accent">${posIcon(pos)}</span> ${pos}s</h2>
+        <table class="rank-table" style="margin-bottom:40px">
+          <thead>
+            <tr>
+              <th style="width:44px">#</th>
+              <th>Jogador</th>
+              <th class="num">PR</th>
+              <th class="num">⚽ Gols</th>
+              <th class="num">🎯 Assists</th>
+              <th class="num">🛡️ Desarmes</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${jogadores.map((j, i) => {
+              const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+              return `<tr>
+                <td class="rank-num ${rankClass}">${i + 1}</td>
+                <td>
+                  <div class="player-name">${esc(j.nome)}</div>
+                  <div class="player-pid">${esc(j.pid)}</div>
+                </td>
+                <td class="num"><span class="pr-value">${j.pr}</span></td>
+                <td class="num">${j.gols}</td>
+                <td class="num">${j.assistencias}</td>
+                <td class="num">${j.desarmes}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
+    }).join('');
+  }
+
+  // ── RENDER STATS BANNER ──
+  function renderStats() {
+    const banner = document.getElementById('statsBanner');
+    if (!todosJogadores.length) { banner.innerHTML = ''; return; }
+
+    const totalPR    = todosJogadores.reduce((s, j) => s + j.pr, 0);
+    const topGol     = [...todosJogadores].sort((a,b) => b.gols - a.gols)[0];
+    const topAssist  = [...todosJogadores].sort((a,b) => b.assistencias - a.assistencias)[0];
+    const topDesarme = [...todosJogadores].sort((a,b) => b.desarmes - a.desarmes)[0];
+
+    banner.innerHTML = `
+      <div class="stat-card">
+        <div class="label">Jogadores</div>
+        <div class="value">${todosJogadores.length}</div>
+        <div class="sub">no ranking</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">PR Total</div>
+        <div class="value">${totalPR}</div>
+        <div class="sub">acumulado</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">⚽ Artilheiro</div>
+        <div class="value">${topGol.gols}</div>
+        <div class="sub">${esc(topGol.nome)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">🎯 Garçom</div>
+        <div class="value">${topAssist.assistencias}</div>
+        <div class="sub">${esc(topAssist.nome)}</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">🛡️ Xerife</div>
+        <div class="value">${topDesarme.desarmes}</div>
+        <div class="sub">${esc(topDesarme.nome)}</div>
+      </div>
+    `;
+  }
+
+  // ── HELPERS ──
+  function posBadgeClass(pos) {
+    if (pos === 'Atacante') return 'pos-ATK';
+    if (pos === 'Meia')     return 'pos-MIA';
+    if (pos === 'Zagueiro') return 'pos-DEF';
+    return '';
+  }
+  function posIcon(pos) {
+    return { Atacante:'⚔️', Meia:'🔷', Zagueiro:'🛡️' }[pos] || '•';
+  }
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── EXPOR FUNÇÕES GLOBAIS ──
+  window._rankHelpers = { renderPosicao, getJogadores: () => todosJogadores };
+  window._fbRemove = (pid) => remove(ref(db, 'ranking/' + pid));
+  // ── MODAL EXCLUIR ──
+  let _pidParaExcluir = null;
+
+  function abrirModal(pid, nome) {
+    _pidParaExcluir = pid;
+    document.getElementById('modalNome').textContent = nome;
+    document.getElementById('modalExcluir').classList.add('open');
+  }
+
+  function fecharModal() {
+    _pidParaExcluir = null;
+    document.getElementById('modalExcluir').classList.remove('open');
+  }
+
+  async function confirmarExclusao() {
+    if (!_pidParaExcluir) return;
+    await window._fbRemove(_pidParaExcluir);
+    fecharModal();
+  }
+
+  // fechar ao clicar fora
+  document.getElementById('modalExcluir').addEventListener('click', function(e) {
+    if (e.target === this) fecharModal();
+  });
+
+
+</script>
+
+<script>
+  // ── TABS ──
+  function switchTab(id) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // ── FILTRO POR POSIÇÃO ──
+  function filterPos(pos) {
+    document.querySelectorAll('.pos-filter-btn').forEach(b => b.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+    window._posAtual = pos;
+    // re-render com filtro
+    const helpers = window._rankHelpers;
+    if (!helpers) return;
+    const jogadores = helpers.getJogadores();
+    const area = document.getElementById('posRankingArea');
+    const posicoes = pos === 'TODOS'
+      ? ['Atacante', 'Meia', 'Zagueiro']
+      : [pos];
+
+    function posIcon(p) { return { Atacante:'⚔️', Meia:'🔷', Zagueiro:'🛡️' }[p] || '•'; }
+    function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    area.innerHTML = posicoes.map(p => {
+      const list = jogadores.filter(j => j.posicao === p);
+      if (!list.length) return `
+        <h2 class="section-title"><span class="accent">${posIcon(p)}</span> ${p}s</h2>
+        <div class="empty-state" style="padding:32px 0 48px">
+          <span style="color:var(--border);font-family:'Bebas Neue',sans-serif;font-size:32px;display:block;margin-bottom:8px">—</span>
+          Nenhum ${p.toLowerCase()} cadastrado ainda.
+        </div>`;
+
+      return `
+        <h2 class="section-title"><span class="accent">${posIcon(p)}</span> ${p}s</h2>
+        <table class="rank-table" style="margin-bottom:40px">
+          <thead><tr>
+            <th style="width:44px">#</th><th>Jogador</th>
+            <th class="num">PR</th><th class="num">⚽ Gols</th>
+            <th class="num">🎯 Assists</th><th class="num">🛡️ Desarmes</th>
+          </tr></thead>
+          <tbody>
+            ${list.map((j, i) => {
+              const rc = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+              return `<tr>
+                <td class="rank-num ${rc}">${i+1}</td>
+                <td><div class="player-name">${esc(j.nome)}</div><div class="player-pid">${esc(j.pid)}</div></td>
+                <td class="num"><span class="pr-value">${j.pr}</span></td>
+                <td class="num">${j.gols}</td>
+                <td class="num">${j.assistencias}</td>
+                <td class="num">${j.desarmes}</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>`;
+    }).join('');
+  }
+</script>
+
+</body>
+</html>
